@@ -30,16 +30,24 @@ def list_to_int(num_list):
     return num_list
 
 
-def set_pow(poly):
+def standardize_poly(poly):
+    # add ^1 to the term in pow 1
     poly = poly.replace('x ', 'x^1 ')
+    # add 1 as multiplier where necessary
+    regex_multiplier_neg = r'- (?=x)'
+    poly = sub(regex_multiplier_neg, '- 1', poly)
+    regex_multiplier_pos = r'\+ (?=x)'
+    poly = sub(regex_multiplier_pos, '+ 1', poly)
+    # add x^0 to the free term
     regex_free_term = r' \d+(?= =)'
     poly = sub(regex_free_term, search(regex_free_term, poly).group() + 'x^0 ', poly)
+    print(poly)
     return poly
 
 
 def get_sum_polynomial(poly_1, poly_2):
-    poly_1 = parse_polynomial(set_pow(poly_1))
-    poly_2 = parse_polynomial(set_pow(poly_2))
+    poly_1 = parse_polynomial(standardize_poly(poly_1))
+    poly_2 = parse_polynomial(standardize_poly(poly_2))
     final_poly = ''
     final_poly_powers = list(poly_1.keys()) + list(poly_2.keys())
     final_poly_powers = set(final_poly_powers)
